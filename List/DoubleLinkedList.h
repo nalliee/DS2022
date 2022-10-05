@@ -1,0 +1,432 @@
+/**
+ * @file DoubleLinkedList.h
+ * @brief DoubleLinkedList模型
+ * 
+ * This contains the reference of pointers, nodes and iterations
+ * of Data Structure and Algorithm in C++
+ *
+ * @author 李沁霞 (natashalie9999@gmail.com)
+ * @date 04 Oct 2022
+ */
+
+#ifndef nalliee_Dll_H
+#define nalliee_Dll_H
+
+#include <iostream>
+
+using namespace std;
+
+template <typename DT>
+class DoubleLinkedList
+{
+ private:
+  /**
+   * @brief Basic double linked list node
+   *
+   * Nested node in double linked list is made public since
+   * the Node itself is inaccesible outside the class
+   */
+  struct Node
+  {
+    DT data;       /** default data. */
+    Node *prev;    /** previous node. */
+    Node *next;    /** next node. */
+
+  /**
+   * @param d assign to data
+   * @param a assign to prev
+   * @param b assign to next
+   */
+  Node(const DT & d = DT{}, Node *a = nullptr, Node *b = nullptr)
+    :data{d}, prev{a}, next{b} {}
+
+  /**
+   * transform left data to right
+   */
+  Node(DT && d, Node *a = nullptr, Node *b = nullptr)
+    :data{move(d)}, prev{a}, next{b} {}
+  };
+
+ public:
+  class const_iterator
+  {
+  public:
+    /**
+     * initialize current to null
+     */
+    const_iterator() : current{nullptr} { }
+
+    /**
+     * @return current data
+     */
+    const DT & operator* () const
+    {return retrieve();}
+
+    /**
+     * @return *this as current next position
+     */
+    const_iterator & operator++ ()
+      {
+	current = current->next;
+	return *this;
+      }
+    
+    /**
+     * @param int to distinguish the loaded item
+     * @return old as current original position
+     */
+    const_iterator operator++ (int)
+    {
+      const_iterator old = *this;
+      ++(*this);
+      return old;
+    }
+
+    /**
+     * @brief checking the equality position of current data with the rhs data
+     * @return true if current data = rhs data
+     */
+    bool operator == (const const_iterator & rhs) const
+    {return current == rhs.current; }
+
+    /**
+     * @brief checking the equality position of current data with the rhs data
+     * @return true if the former data != rhs
+     */
+    bool operator != (const const_iterator & rhs) const
+    {return !(*this == rhs); }
+
+  protected:
+    Node *current;
+    DT & retrieve() const
+    {return current->data; }
+
+    /**
+     * initialize a as current pointer
+     */
+    const_iterator(Node *a) : current{a} {}
+
+   /**
+     * grant DoubleLinkedList class to have access of the protected member
+     */
+    friend class DoubleLinkedList<DT>;
+  };
+
+  class iterator : public const_iterator
+  {
+  public:
+    iterator(){}
+
+    DT & operator* ()
+    {return const_iterator::retrieve(); }
+
+    /**
+     * @brief the accessor operator* is implimented in iterator otherwise
+     * the original implementation is hidden by the newly added accessor
+     * @return current data
+     */
+    const DT & operator* () const
+    {return const_iterator::operator*(); }
+
+    /**
+     * @brief operator++ used to add the former position to next position
+     * @return *this to next position
+     */
+    iterator & operator++ ()
+    {
+      this->current = this->current->next;
+      return *this;
+    }
+
+    /**
+     * @param int to distinguish the loaded item
+     * @return old as the original position of *this
+     */
+    iterator operator++ (int)
+    {
+      iterator old = *this;
+      ++(*this);
+      return old;
+    }
+    
+  protected:
+
+    /**
+     * initialize const_iterator as a
+     */
+    iterator(Node *a) : const_iterator{a}{}
+
+    /**
+     * grant DoubleLinkedList<DT> to have access of the protected member
+     */
+    friend class DoubleLinkedList<DT>;
+  };
+
+public:
+  DoubleLinkedList()
+  {init(); }
+
+  /**
+   * add new element at the end of the list
+   */
+  DoubleLinkedList(const DoubleLinkedList & rhs)
+  {
+    init();
+    for(auto & x : rhs)
+      push_back(x);
+  }
+
+  /**
+   * prevent leaked memory
+   */
+  ~DoubleLinkedList()
+  {
+    clear();
+    delete head;
+    delete tail;
+  }
+
+  /**
+   * swap the location of *this and copy
+   */
+  DoubleLinkedList & operator= (const DoubleLinkedList & rhs)
+  {
+    DoubleLinkedList copy = rhs;
+    swap(*this, copy);
+    return *this;
+  }
+
+  /**
+   * create a rhs function
+   */
+  DoubleLinkedList(DoubleLinkedList && rhs)
+    : theSize{rhs.theSize}, head{rhs.head}, tail{rhs.tail}
+  {
+    rhs.theSize = 0;
+    rhs.head = nullptr;
+    rhs.tail = nullptr;
+  }
+
+  /**
+   * swap the position of lhs to rhs
+   */
+  DoubleLinkedList & operator= (DoubleLinkedList && rhs)
+  {
+    swap(theSize, rhs.theSize);
+    swap(head, rhs.head);
+    swap(tail, rhs.tail);
+
+    return *this;
+  }
+
+  /**
+   * @brief create begin function that is located at beginning of list
+   * @return head->next iterator
+   */
+  iterator begin()
+  {return {head->next}; }
+
+  /**
+   * @brief loaded begin function used to obtain the beginning of list
+   * @return head->next iterator
+   */
+  const_iterator begin() const
+  {return {head->next}; }
+
+  /**
+   * @brief create end function that is located at the end of list
+   * @return tail iterator
+   */
+  iterator end()
+  {return {tail}; }
+
+  /**
+   * @brief loaded end function used to obtain the end of list
+   * @return tail iterator
+   */
+  const_iterator end() const
+  {return {tail}; }
+
+  /**
+   * @brief size function to obtain the list size
+   * @return theSize
+   */
+  int size() const
+  {return theSize; }
+
+  /**
+   * @brief determine whether the list is empty
+   * @return true if size = 0
+   */
+  bool empty() const
+  {return size() == 0; }
+
+  /**
+   * clear function to clear the list
+   */
+  void clear()
+  {
+    while(!empty())
+      pop_front();
+  }
+
+  /**
+   * @brief front function to return the first data position
+   * @return DT first data value
+   */
+  DT & front()
+  {return *begin(); }
+
+  /**
+   * @brief loaded front function to return the first data position
+   * @return const DT first data value
+   */
+  const DT & front() const
+  {return *begin(); }
+
+  /**
+   * @brief back function to return end function previous data value
+   * @return DT end function previous data value
+   */
+  DT & back()
+  {return *--end(); }
+
+  /**
+   * @brief loaded back function to return end function previous data value
+   * @return const DT end function previous data value
+   */
+  const DT & back() const
+  {return *--end(); }
+
+  /**
+   * @brief push_front to insert DT rhs value x at the beginning of the list
+   * @param x as added data
+   */
+  void push_front(const DT & x)
+  {insert (begin(),x); }
+
+  /**
+   * @brief push_front to insert loaded DT rhs value x at the beginning of the list
+   * @param x as rhs added data
+   */
+  void push_front(DT && x)
+  {insert (begin(), move(x)); }
+
+  /**
+   * @brief push_back to insert DT value x at the end of the list
+   * @param x as added data
+   */
+  void push_back(const DT & x)
+  {insert (end(), x); }
+
+  /**
+   * @brief push_back to insert loaded DT rhs value x at the end of the list
+   * @param x as rhs added data
+   */
+  void push_back(DT && x)
+  {insert (end(), move(x)); }
+
+  /**
+   * pop_front function to remove the beginning of list
+   */
+  void pop_front()
+  {erase (begin()); }
+
+  /**
+   * pop_back function to remove the end of list
+   */
+  void pop_back()
+  {erase (--end()); }
+
+  /**
+   * @brief insert is used to insert new node
+   * @param x as rhs value
+   * @param itr to ensure the added position
+   * @return the complete iteration 
+   */
+  iterator insert(iterator itr, const DT & x)
+  {
+    Node *a = itr.current;
+    theSize++;
+    return {a->prev = a->prev->next = new Node{x, a->prev, a} };
+  };
+
+  /**
+   * @brief insert is used to insert new node
+   * @param x as loaded rhs value
+   * @param itr to ensure the added position
+   * @return the complete iteration
+   */
+  iterator insert(iterator itr, DT && x)
+  {
+    Node *a = itr.current;
+    theSize++;
+    return {a->prev = a->prev->next = new Node{move(x), a->prev, a} };
+  };
+
+  /**
+   * @brief erase function to erase the end of node
+   * @param itr to ensure the erase position
+   * @return the complete iteration
+   */
+  iterator erase(iterator itr)
+  {
+    Node *a = itr.current;
+    iterator retVal{a->next};
+    a->prev->next = a->next;
+    a->next->prev= a->prev;
+    delete a;
+    theSize--;
+
+    return retVal;
+  };
+
+  iterator erase(iterator itr, DT xyz)
+  {
+    if (*itr = xyz)
+      {
+	Node *a = itr.current;
+	iterator retVal{a->next};
+	a->prev->next = a->next;
+	a->next->prev = a->prev;
+	delete a;
+	theSize--;
+
+	return retVal;
+      }
+    else
+      return itr;
+  }
+
+  /**
+   * @brief erase loaded function to erase node
+   * @param from to ensure the beginning position of iterator
+   * @param to function to ensure the end position of iterator
+   * @return complete erase iterator
+   */
+  iterator erase(iterator from, iterator to)
+  {
+    for(iterator itr = from; itr != to; )
+      itr = erase(itr);
+    return to;
+  };
+
+private:
+  int theSize;
+  Node *head;
+  Node *tail;
+
+  void init()
+  {
+    theSize = 0;
+    head = new Node;
+    tail = new Node;
+    head->next = tail;
+    tail->prev = head;
+  };
+};
+
+#endif
+
+  
+      
