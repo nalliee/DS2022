@@ -1,0 +1,63 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{ctex}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{multirow}
+
+\title{\textbf{作业六：排序算法}}
+\author{李沁霞 \\ 3210300363 统计学}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{简介}
+我们比较两种强大的排序算法，快速排序(quicksort)和堆排序(heapsort)。快速排序通常在实践中使用，而内存有问题时使用堆排序。
+\\
+首先简单的介绍一下快速排序和堆排序的算法流程，然后比较它们的测试结果。
+
+\section{快速排序}
+快速排序基于分而治之的方法。总的来说，快速排序算法遵循三个主要步骤：
+\begin{enumerate}
+    \item 选取一个元素作为基准
+    \item 将较小的元素移动到左侧，而大的元素移动到右侧
+    \item 在每个分区上重复上述步骤
+\end{enumerate}
+平均而言，最佳情况下快速排序算法的时间复杂度为$O(nlogn)$。最坏情况的时间复杂度为$O(n^2)$，如果选错了主元就发生这种情况。快速排序实现时不稳定，则最佳情况下的时间复杂度可能为$O(logn)$，而平均情况为$O(n)$。
+
+\section{堆排序}
+堆排序是一种基于二叉堆数据结构的比较排序方法。堆排序算法有四个主要步骤：
+\begin{enumerate}
+    \item 构建一个最小（或最大）堆
+    \item 此时，最小项存储在堆的根部。从根节点删除元素，并在右边的叶子储存在根节点中。
+    \item 堆化树的根
+    \item 当堆的大小大于1时，重复步骤2和3
+\end{enumerate}
+Percdown是一个以正确的顺序排列节点使他们遵循堆属性的过程。堆排序在所有情况下的时间复杂度都是$O(nlogn)$，但是堆排序使用$O(1)$辅助空间，所以如果内存有问题，使用堆排序是一个不错的选择。
+
+\section{测试结果}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+    \hline
+    Size & Efficiency \% & Heapsort (s) & Quicksort (s) \\
+    \hline
+    \multirow{4}{4em}{10000} & 1 & 0.003 & 0.001 \\
+    & 10 & 0.005 & 0.001 \\
+    & 90 & 0.004 & 0.001 \\
+    & 99 & 0.004 & 0.001 \\
+    \hline
+    \multirow{4}{4em}{100000} & 1 & 0.059 & 0.012 \\
+    & 10 & 0.062 & 0.007 \\
+    & 90 & 0.046 & 0.006 \\
+    & 99 & 0.045 & 0.01 \\
+    \hline
+    \multirow{4}{4em}{1000000} & 1 & 0.346 & 0.077\\
+    & 10 & 0.333 & 0.08 \\
+    & 90 & 0.318 & 0.063 \\
+    & 99 & 0.307 & 0.067 \\
+    \hline
+\end{tabular}
+\end{center}
+
+\end{document}
