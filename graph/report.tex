@@ -1,0 +1,60 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{ctex}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{listings}
+
+\title{\textbf{作业七：图的模板类设计}}
+\author{李沁霞 \\ 3210300363 统计学}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{图形简介}
+图是由顶点与边所组成的非线性数据结构。顶点是图的基本单位。有时，顶点也被称为节点。而边用于连接图形的两个节点，它又称为孤。图用于解决许多实现生活中的问题。图也用于社交网络，如LinkedIn、Facebook。
+
+\section{设计思路}
+\begin{tabular}{|c|c|}
+    \hline
+     Function &  Usage \\
+     \hline
+     void \texttt{choose\_store\_mode()} &  分别\texttt{adj\_mat}与\texttt{adj\_list}的列表 \\
+     \hline
+     void addEdge()  &  根据\texttt{store\_type}使用边连接两个节点 \\
+     \hline
+     void Init() &  根据\texttt{store\_type}增加函数 \\
+     \hline
+     void listVertex() & 打印Vertex中的值 \\
+     \hline
+     void listEdges() & 根据\texttt{store\_type}打印该字母与边 \\
+     \hline
+\end{tabular}
+
+\section{测试结果}
+\begin{lstlisting}
+    adj_mat:
+    A B C D
+    (A,B,3)
+    (A,C,2)
+    (C,D,1)
+    (D,B,5)
+    (D,C,4)
+    adj_list:
+    A B C D
+    (A,B,3)
+    (A,C,2)
+    (C,D,1)
+    (D,B,5)
+    (D,C,4)
+    undirected graph:
+    A B C D
+    (A,B,1)
+    (A,D,1)
+    (B,C,1)
+    (C,D,1)
+\end{lstlisting}
+邻接矩阵\texttt{(adj\_mat)}中的每个条目代表这些顶点之间的边的权重，而邻接表\texttt{(adj\_list)}中的一个指针数组指向连接该点的边。无向图(undirected graph)是连接在一起的一组对象，其中所有边都是双向。无向图有时被称为无向网络。
+
+\end{document}
